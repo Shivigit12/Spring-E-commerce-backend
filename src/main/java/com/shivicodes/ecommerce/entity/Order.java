@@ -4,9 +4,10 @@ import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.Setter;
 import org.hibernate.annotations.CreationTimestamp;
+import org.hibernate.annotations.UpdateTimestamp;
+
 
 import java.math.BigDecimal;
-import java.math.BigInteger;
 import java.util.Date;
 import java.util.HashSet;
 import java.util.Set;
@@ -15,48 +16,58 @@ import java.util.Set;
 @Table(name="orders")
 @Getter
 @Setter
-public class Order  {
+public class Order {
+
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name = "id")
+    @Column(name="id")
     private Long id;
-    @Column(name = "order_tracking_number")
+
+    @Column(name="order_tracking_number")
     private String orderTrackingNumber;
-    @Column(name = "total_quantity")
+
+    @Column(name="total_quantity")
     private int totalQuantity;
-    @Column(name = "total_price")
+
+    @Column(name="total_price")
     private BigDecimal totalPrice;
-    @Column(name = "status")
+
+    @Column(name="status")
     private String status;
-    @Column(name = "date_created")
+
+    @Column(name="date_created")
     @CreationTimestamp
     private Date dateCreated;
-    @Column(name = "date_updated")
-    @CreationTimestamp
-    private Date dateUpdated;
+
+    @Column(name="last_updated")
+    @UpdateTimestamp
+    private Date lastUpdated;
+
     @OneToMany(cascade = CascadeType.ALL, mappedBy = "order")
     private Set<OrderItem> orderItems = new HashSet<>();
 
     @ManyToOne
     @JoinColumn(name = "customer_id")
     private Customer customer;
-    @OneToOne
+
+    @OneToOne(cascade = CascadeType.ALL)
     @JoinColumn(name = "shipping_address_id", referencedColumnName = "id")
     private Address shippingAddress;
-    @OneToOne
+
+    @OneToOne(cascade = CascadeType.ALL)
     @JoinColumn(name = "billing_address_id", referencedColumnName = "id")
     private Address billingAddress;
 
-
     public void add(OrderItem item) {
-        if(item != null) {
-            if(orderItems == null) {
+
+        if (item != null) {
+            if (orderItems == null) {
                 orderItems = new HashSet<>();
             }
+
             orderItems.add(item);
-            item.setOrder((jakarta.persistence.criteria.Order) this);
+            item.setOrder(this);
         }
-
     }
-
 }
+

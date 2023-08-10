@@ -16,13 +16,14 @@ import org.springframework.transaction.annotation.Transactional;
 import java.util.Set;
 import java.util.UUID;
 
-@RequiredArgsConstructor
-@NoArgsConstructor
-@Getter
-@Setter
+
+
 @Service
 public class CheckoutServiceImpl implements CheckoutService{
     private CustomerRepository customerRepository;
+    public CheckoutServiceImpl(CustomerRepository customerRepository) {
+        this.customerRepository = customerRepository;
+    }
     @Override
     @Transactional
     public PurchaseResponse placeOrder(Purchase purchase) {
